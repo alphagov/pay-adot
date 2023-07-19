@@ -1,0 +1,28 @@
+receivers:
+  prometheus:
+    config:
+      global:
+        scrape_interval: 15s
+        scrape_timeout: 10s
+      scrape_configs:
+      - job_name: "adot-sidecar-scrape-application"
+        # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+        static_configs:
+          - targets: [ "test-app:$APPLICATION_PORT" ]
+        honor_labels: true
+        honor_timestamps: true
+
+exporters:
+  prometheusremotewrite:
+    endpoint: $PROMETHEUS_REMOTE_WRITE_URL
+    # This is needed to get labels 
+    resource_to_telemetry_conversion:
+        enabled: false
+  logging:
+    loglevel: info
+
+service:
+  pipelines:
+    metrics/application:
+      receivers: [prometheus]
+      exporters: [logging, prometheusremotewrite]

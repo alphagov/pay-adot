@@ -1,0 +1,33 @@
+name: Build and test
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  detect-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+      - name: Detect secrets
+        uses: alphagov/pay-ci/actions/detect-secrets@master
+
+  build-and-test:
+    name: Container Build Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+      - name: Docker build
+        run: |
+          docker build -t pay-adot:github-tests .
+      - name: Run tests
+        working-directory: tests/
+        run: ./test.sh
+
+

@@ -1,0 +1,39 @@
+version: "3"
+services:
+  test-app:
+    build: node_service/
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: ["CMD", "wget", "-O", "/dev/null", "-q", "http://localhost:3000/metrics"]
+      interval: 1s
+      timeout: 10s
+      retries: 30
+
+  adot-sidecar:
+    build: ../.
+    volumes:
+      - "./test-config.yml:/etc/ecs/govuk-pay-adot-sidecar-config.yaml"
+    depends_on:
+      - prometheus
+      - test-app
+    environment:
+      - APPLICATION_PORT=3000
+      - PROMETHEUS_REMOTE_WRITE_URL=http://prometheus:9090/api/v1/write
+ 
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+    command:
+      - --web.enable-remote-write-receiver
+      - --config.file=/etc/prometheus/prometheus.yml
+    healthcheck:
+      test: ["CMD", "wget", "-O", "/dev/null", "-q", "http://localhost:9090/-/ready"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
