@@ -15,7 +15,6 @@ receivers:
 exporters:
   prometheusremotewrite:
     endpoint: $PROMETHEUS_REMOTE_WRITE_URL
-    # This is needed to get labels 
     resource_to_telemetry_conversion:
         enabled: false
   logging:
