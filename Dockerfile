@@ -1,4 +1,4 @@
-FROM amazon/aws-otel-collector:v0.30.0
+FROM amazon/aws-otel-collector:v0.31.0
 
 COPY config.yml /etc/ecs/govuk-pay-adot-sidecar-config.yaml
 
