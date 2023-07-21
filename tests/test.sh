@@ -9,6 +9,9 @@ function cleanup {
 
 trap cleanup EXIT
 
+echo "Building images"
+docker-compose build
+
 echo "Bringing up test environment"
 docker-compose up -d
 
