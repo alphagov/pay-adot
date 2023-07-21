@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import promClient from 'prom-client'
 import express from 'express'
 
