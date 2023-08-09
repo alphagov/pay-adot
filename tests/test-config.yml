@@ -24,6 +24,8 @@ service:
   telemetry:
     logs:
       level: $OTEL_LOG_LEVEL
+    metrics:
+      level: none
   pipelines:
     metrics/application:
       receivers: [prometheus]
