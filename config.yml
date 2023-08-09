@@ -34,6 +34,8 @@ service:
   telemetry:
     logs:
       level: $OTEL_LOG_LEVEL
+    metrics:
+      level: none
   extensions: [sigv4auth]
   pipelines:
     metrics/application:
