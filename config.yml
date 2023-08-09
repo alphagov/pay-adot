@@ -31,6 +31,9 @@ extensions:
       arn: $PROMETHEUS_WRITE_ASSUME_ROLE_ARN
 
 service:
+  telemetry:
+    logs:
+      level: $OTEL_LOG_LEVEL
   extensions: [sigv4auth]
   pipelines:
     metrics/application:
