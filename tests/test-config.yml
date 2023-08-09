@@ -21,6 +21,9 @@ exporters:
     loglevel: info
 
 service:
+  telemetry:
+    logs:
+      level: $OTEL_LOG_LEVEL
   pipelines:
     metrics/application:
       receivers: [prometheus]
