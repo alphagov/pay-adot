@@ -18,6 +18,11 @@ processors:
     timeout: 2s
     override: true
 
+  resourcedetection/ecs:
+    detectors: [ecs]
+    timeout: 2s
+    override: true
+
   resource/deleteUnrequired:
     attributes:
       - key: net.host.name
@@ -59,6 +64,7 @@ service:
         - prometheus
       processors:
         - resourcedetection/env
+        - resourcedetection/ecs
         - resource/deleteUnrequired
         - resource/rename
       exporters:
