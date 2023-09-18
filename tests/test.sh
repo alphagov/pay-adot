@@ -53,6 +53,18 @@ if [ "$LABEL" != "fooValue" ]; then
   exit 1
 fi
 
+echo "Checking label fooLabel2 from the env is not being renamed"
+LABEL_RESPONSE=$(curl --no-progress-meter -X GET http://127.0.0.1:9090/api/v1/label/fooLabel2/values)
+LABEL=$(jq -r '.data[0]' <<< "$LABEL_RESPONSE")
+
+if [ "$LABEL" != "fooValue2" ]; then
+  echo "ERROR: Labels were not renamed."
+  echo "Received the following reply when querying for fooLabel:"
+  jq <<< "$LABEL_RESPONSE"
+  exit 1
+fi
+
+
 echo "Checking values are being sent"
 QUERY_RESPONSE=$(curl --no-progress-meter -X GET http://127.0.0.1:9090/api/v1/query?query=page_count_foo)
 METRIC_VALUE=$(jq -r '.data.result[0].value[1]' <<< "$QUERY_RESPONSE")
