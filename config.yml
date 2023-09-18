@@ -12,16 +12,72 @@ receivers:
         honor_timestamps: true
 
 processors:
+  resourcedetection/env:
+    detectors: [env]
+    timeout: 2s
+    override: true
+
+  resourcedetection/ecs:
+    detectors: [ecs]
+    timeout: 2s
+    override: true
+
+  resource/deleteUnrequired:
+    attributes:
+      - key: net.host.name
+        action: delete
+      - key: net.host.port
+        action: delete
+      - key: service.instance.id
+        action: delete
+      - key: service.name
+        action: delete
+      - key: http.scheme
+        action: delete
+      - key: cloud.provider
+        action: delete
+      - key: cloud.platform
+        action: delete
+      - key: cloud.account.id
+        action: delete
+      - key: cloud.region
+        action: delete
+      - key: cloud.availability_zone
+        action: delete
+      - key: aws.ecs.cluster.arn
+        action: delete
+      - key: aws.ecs.task.family
+        action: delete
+      - key: aws.ecs.task.revision
+        action: delete
+      - key: aws.ecs.launchtype
+        action: delete
+      - key: aws.log.group.names
+        action: delete
+      - key: aws.log.group.arns
+        action: delete
+      - key: aws.log.stream.names
+        action: delete
+      - key: aws.log.stream.arns
+        action: delete
+
+  resource/rename:
+    attributes:
+      - key: ecsTaskARN
+        from_attribute: aws.ecs.task.arn
+        action: insert
+      - key: aws.ecs.task.arn
+        action: delete
 
 exporters:
   prometheusremotewrite:
     endpoint: $PROMETHEUS_ENDPOINT_URL
     resource_to_telemetry_conversion:
-        enabled: false
+        enabled: true
     auth:
       authenticator: sigv4auth
   logging:
-    loglevel: info
+    verbosity: normal
 
 extensions:
   sigv4auth:
@@ -39,5 +95,13 @@ service:
   extensions: [sigv4auth]
   pipelines:
     metrics/application:
-      receivers: [prometheus]
-      exporters: [logging, prometheusremotewrite]
+      receivers:
+        - prometheus
+      processors:
+        - resourcedetection/env
+        - resourcedetection/ecs
+        - resource/deleteUnrequired
+        - resource/rename
+      exporters:
+        - logging
+        - prometheusremotewrite
