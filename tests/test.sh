@@ -58,8 +58,8 @@ LABEL_RESPONSE=$(curl --no-progress-meter -X GET http://127.0.0.1:9090/api/v1/la
 LABEL=$(jq -r '.data[0]' <<< "$LABEL_RESPONSE")
 
 if [ "$LABEL" != "fooValue2" ]; then
-  echo "ERROR: Labels were not renamed."
-  echo "Received the following reply when querying for fooLabel:"
+  echo "ERROR: fooLabel2 was not added."
+  echo "Received the following reply when querying for fooLabel2:"
   jq <<< "$LABEL_RESPONSE"
   exit 1
 fi
