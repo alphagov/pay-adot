@@ -12,13 +12,40 @@ receivers:
         honor_labels: true
         honor_timestamps: true
 
+processors:
+  resourcedetection/env:
+    detectors: [env]
+    timeout: 2s
+    override: true
+
+  resource/deleteUnrequired:
+    attributes:
+      - key: net.host.name
+        action: delete
+      - key: net.host.port
+        action: delete
+      - key: service.instance.id
+        action: delete
+      - key: service.name
+        action: delete
+      - key: http.scheme
+        action: delete
+
+  resource/rename:
+    attributes:
+      - key: barLabel
+        from_attribute: fooLabel
+        action: insert
+      - key: fooLabel
+        action: delete
+
 exporters:
   prometheusremotewrite:
     endpoint: $PROMETHEUS_REMOTE_WRITE_URL
     resource_to_telemetry_conversion:
-        enabled: false
+        enabled: true
   logging:
-    loglevel: info
+    verbosity: normal
 
 service:
   telemetry:
@@ -28,5 +55,12 @@ service:
       level: none
   pipelines:
     metrics/application:
-      receivers: [prometheus]
-      exporters: [logging, prometheusremotewrite]
+      receivers:
+        - prometheus
+      processors:
+        - resourcedetection/env
+        - resource/deleteUnrequired
+        - resource/rename
+      exporters:
+        - logging
+        - prometheusremotewrite
