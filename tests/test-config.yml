@@ -47,6 +47,9 @@ processors:
 exporters:
   prometheusremotewrite:
     endpoint: $PROMETHEUS_REMOTE_WRITE_URL
+    # We do not want to cause a mass discontinuity in all out existing metrics, so disable the new behaviour
+    # which adds suffixes with the metrics type.
+    add_metric_suffixes: false
     resource_to_telemetry_conversion:
         enabled: true
   logging:
