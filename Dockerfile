@@ -1,4 +1,4 @@
-FROM amazon/aws-otel-collector:v0.35.0
+FROM amazon/aws-otel-collector:v0.35.1
 
 ENV OTEL_LOG_LEVEL=INFO
 
