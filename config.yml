@@ -11,6 +11,7 @@ receivers:
         honor_labels: true
         honor_timestamps: true
   awsecscontainermetrics:
+    collection_interval: 30s
 
 processors:
   resourcedetection/env:
@@ -23,53 +24,6 @@ processors:
     timeout: 2s
     override: true
 
-  resource/deleteUnrequired:
-    attributes:
-      - key: net.host.name
-        action: delete
-      - key: net.host.port
-        action: delete
-      - key: service.instance.id
-        action: delete
-      - key: service.name
-        action: delete
-      - key: http.scheme
-        action: delete
-      - key: cloud.provider
-        action: delete
-      - key: cloud.platform
-        action: delete
-      - key: cloud.account.id
-        action: delete
-      - key: cloud.region
-        action: delete
-      - key: cloud.availability_zone
-        action: delete
-      - key: aws.ecs.cluster.arn
-        action: delete
-      - key: aws.ecs.task.family
-        action: delete
-      - key: aws.ecs.task.revision
-        action: delete
-      - key: aws.ecs.launchtype
-        action: delete
-      - key: aws.log.group.names
-        action: delete
-      - key: aws.log.group.arns
-        action: delete
-      - key: aws.log.stream.names
-        action: delete
-      - key: aws.log.stream.arns
-        action: delete
-
-  resource/rename:
-    attributes:
-      - key: ecsTaskARN
-        from_attribute: aws.ecs.task.arn
-        action: insert
-      - key: aws.ecs.task.arn
-        action: delete
-
   filter:
     metrics:
       include:
@@ -81,8 +35,6 @@ processors:
           - .*cpu.utilized
           - .*network.rate.rx
           - .*network.rate.tx
-          - .*storage.read_bytes
-          - .*storage.write_bytes
   metricstransform:
     transforms:
       - include: ecs.task.memory.utilized
@@ -103,12 +55,6 @@ processors:
       - include: ecs.task.network.rate.tx
         action: update
         new_name: NetworkTxBytes
-      - include: ecs.task.storage.read_bytes
-        action: update
-        new_name: StorageReadBytes
-      - include: ecs.task.storage.write_bytes
-        action: update
-        new_name: StorageWriteBytes
   resource:
     attributes:
       - key: ClusterName
@@ -148,7 +94,7 @@ exporters:
     auth:
       authenticator: sigv4auth
   logging:
-    verbosity: normal
+    verbosity: normal # 'detailed' to debug
   awsemf:
     namespace: ECS/ContainerInsights
     log_group_name:  '/aws/ecs/containerinsights/{ClusterName}/performance'
@@ -164,7 +110,12 @@ exporters:
           - CpuUtilized
           - CpuReserved
       - dimensions: [[ClusterName], [ClusterName, TaskDefinitionFamily, ContainerName]]
-        metric_name_selectors: [container.*]
+        metric_name_selectors: 
+          - MemoryUtilized 
+          - MemoryReserved 
+          - CpuUtilized
+          - CpuReserved
+          - container.*
 
 extensions:
   sigv4auth:
@@ -187,7 +138,6 @@ service:
       processors:
         - resourcedetection/env
         - resourcedetection/ecs
-        - resource/deleteUnrequired
         - resource/rename
       exporters:
         - logging
