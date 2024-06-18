@@ -178,7 +178,6 @@ service:
         - resourcedetection/env
         - resourcedetection/ecs
         - resource/deleteUnrequired
-        - resource/rename
       exporters:
         - logging
         - prometheusremotewrite
