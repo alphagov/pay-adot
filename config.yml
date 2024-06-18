@@ -24,6 +24,45 @@ processors:
     timeout: 2s
     override: true
 
+  resource/deleteUnrequired:
+    attributes:
+      - key: net.host.name
+        action: delete
+      - key: net.host.port
+        action: delete
+      - key: service.instance.id
+        action: delete
+      - key: service.name
+        action: delete
+      - key: http.scheme
+        action: delete
+      - key: cloud.provider
+        action: delete
+      - key: cloud.platform
+        action: delete
+      - key: cloud.account.id
+        action: delete
+      - key: cloud.region
+        action: delete
+      - key: cloud.availability_zone
+        action: delete
+      - key: aws.ecs.cluster.arn
+        action: delete
+      - key: aws.ecs.task.family
+        action: delete
+      - key: aws.ecs.task.revision
+        action: delete
+      - key: aws.ecs.launchtype
+        action: delete
+      - key: aws.log.group.names
+        action: delete
+      - key: aws.log.group.arns
+        action: delete
+      - key: aws.log.stream.names
+        action: delete
+      - key: aws.log.stream.arns
+        action: delete
+
   filter:
     metrics:
       include:
@@ -138,6 +177,7 @@ service:
       processors:
         - resourcedetection/env
         - resourcedetection/ecs
+        - resource/deleteUnrequired
         - resource/rename
       exporters:
         - logging
