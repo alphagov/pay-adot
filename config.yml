@@ -63,6 +63,14 @@ processors:
       - key: aws.log.stream.arns
         action: delete
 
+  resource/rename:
+    attributes:
+      - key: ecsTaskARN
+        from_attribute: aws.ecs.task.arn
+        action: insert
+      - key: aws.ecs.task.arn
+        action: delete
+
   filter:
     metrics:
       include:
@@ -178,6 +186,7 @@ service:
         - resourcedetection/env
         - resourcedetection/ecs
         - resource/deleteUnrequired
+        - resource/rename
       exporters:
         - logging
         - prometheusremotewrite
