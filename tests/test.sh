@@ -4,16 +4,16 @@ set -euo pipefail
 
 function cleanup {
   echo "Tearing down docker-compose environment"
-  docker-compose down -v
+  docker compose down -v
 }
 
 trap cleanup EXIT
 
 echo "Building images"
-docker-compose build
+docker compose build
 
 echo "Bringing up test environment"
-docker-compose up -d
+docker compose up -d
 
 # Wait to ensure everything is alive
 echo "Waiting a few seconds to make sure everything is alive"
