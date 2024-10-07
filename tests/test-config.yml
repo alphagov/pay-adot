@@ -8,7 +8,7 @@ receivers:
       - job_name: "adot-sidecar-scrape-application"
         # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
         static_configs:
-          - targets: [ "test-app:$APPLICATION_PORT" ]
+          - targets: [ "test-app:${APPLICATION_PORT}" ]
         honor_labels: true
         honor_timestamps: true
 
@@ -46,7 +46,7 @@ processors:
 
 exporters:
   prometheusremotewrite:
-    endpoint: $PROMETHEUS_REMOTE_WRITE_URL
+    endpoint: ${PROMETHEUS_REMOTE_WRITE_URL}
     # We do not want to cause a mass discontinuity in all out existing metrics, so disable the new behaviour
     # which adds suffixes with the metrics type.
     add_metric_suffixes: false
@@ -58,7 +58,7 @@ exporters:
 service:
   telemetry:
     logs:
-      level: $OTEL_LOG_LEVEL
+      level: ${OTEL_LOG_LEVEL}
     metrics:
       level: none
   pipelines:
