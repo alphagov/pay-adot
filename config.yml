@@ -7,7 +7,7 @@ receivers:
       scrape_configs:
       - job_name: "adot-sidecar-scrape-application"
         static_configs:
-        - targets: [ "127.0.0.1:$APPLICATION_PORT" ]
+        - targets: [ "127.0.0.1:${APPLICATION_PORT}" ]
         honor_labels: true
         honor_timestamps: true
   awsecscontainermetrics:
@@ -132,7 +132,7 @@ processors:
 
 exporters:
   prometheusremotewrite:
-    endpoint: $PROMETHEUS_ENDPOINT_URL
+    endpoint: ${PROMETHEUS_ENDPOINT_URL}
     # We do not want to cause a mass discontinuity in all out existing metrics, so disable the new behaviour
     # which adds suffixes with the metrics type.
     add_metric_suffixes: false
@@ -166,15 +166,15 @@ exporters:
 
 extensions:
   sigv4auth:
-    region: $AWS_REGION
+    region: ${AWS_REGION}
     service: aps
     assume_role:
-      arn: $PROMETHEUS_WRITE_ASSUME_ROLE_ARN
+      arn: ${PROMETHEUS_WRITE_ASSUME_ROLE_ARN}
 
 service:
   telemetry:
     logs:
-      level: $OTEL_LOG_LEVEL
+      level: ${OTEL_LOG_LEVEL}
     metrics:
       level: none
   extensions: [sigv4auth]
