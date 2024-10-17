@@ -1,4 +1,4 @@
-FROM amazon/aws-otel-collector:v0.41.0@sha256:7edf4972419b52c3259d1118a9506d883e15dbb7bfb4cc7d90dfc16b68594233
+FROM amazon/aws-otel-collector:v0.41.1@sha256:2fbdee4adde727cbab0e4f8362b4f1b32c7737053ffca7dcd7ac93f7a322f4d3
 
 ENV OTEL_LOG_LEVEL=INFO
 
