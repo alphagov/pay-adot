@@ -140,8 +140,8 @@ exporters:
         enabled: true
     auth:
       authenticator: sigv4auth
-  logging:
-    verbosity: normal # 'detailed' to debug
+  debug:
+    verbosity: normal # 'detailed' to verbosely log pipeline data
   awsemf:
     namespace: ECS/ContainerInsights
     log_group_name:  '/aws/ecs/containerinsights/{ClusterName}/performance'
@@ -188,7 +188,7 @@ service:
         - resource/deleteUnrequired
         - resource/rename
       exporters:
-        - logging
+        - debug
         - prometheusremotewrite
     metrics:
       receivers: 

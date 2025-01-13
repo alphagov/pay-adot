@@ -52,7 +52,7 @@ exporters:
     add_metric_suffixes: false
     resource_to_telemetry_conversion:
         enabled: true
-  logging:
+  debug:
     verbosity: normal
 
 service:
@@ -71,5 +71,5 @@ service:
         - resource/deleteUnrequired
         - resource/rename
       exporters:
-        - logging
+        - debug
         - prometheusremotewrite

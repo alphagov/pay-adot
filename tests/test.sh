@@ -13,7 +13,21 @@ echo "Building images"
 docker compose build
 
 echo "Bringing up test environment"
-docker compose up -d
+if ! docker compose up -d --wait; then
+  echo "Error starting up test environment."
+  echo
+
+  for APP in adot-sidecar test-app prometheus; do
+    CONTAINER_STATUS=$(docker compose ps "$APP" --format json | jq -r '.State')
+    if [ "${CONTAINER_STATUS}" != "running" ]; then
+      echo "$APP did not start up correctly. Logs for the container follow"
+      echo "==============================================================================================="
+      docker compose logs "$APP" --no-color --no-log-prefix
+      echo "==============================================================================================="
+    fi
+  done
+  exit 1
+fi
 
 # Wait to ensure everything is alive
 echo "Waiting a few seconds to make sure everything is alive"
